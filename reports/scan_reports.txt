@@ -1,0 +1,6 @@
+Scanning URL :hhtps://axample.com
+
+---HTTP Security Headers ---
+ERROR ANALYZING HEADERS:No connection adapters were found for 'hhtps://axample.com'
+--- Reflected XSS Testing ---
+Error during XSS testing :No connection adapters were found for "hhtps://axample.com?q=<script>alert('XSS')</script>"
