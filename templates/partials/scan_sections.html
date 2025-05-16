@@ -1,0 +1,82 @@
+{# Partial to display scan sections for a single URL result (variable: res) #}
+
+{% if res.ssl %}
+  <section class="mb-4">
+    <h4>SSL/TLS Certificate</h4>
+    {% if res.ssl.error %}
+      <p class="text-danger">{{ res.ssl.error }}</p>
+      {% if res.ssl.note %}
+        <p class="text-warning">{{ res.ssl.note }}</p>
+      {% endif %}
+    {% else %}
+      <ul>
+        <li><strong>Issuer:</strong> {{ res.ssl.issuer.O or 'N/A' }}</li>
+        <li><strong>Subject:</strong> {{ res.ssl.subject.CN or 'N/A' }}</li>
+        <li><strong>Valid From:</strong> {{ res.ssl.valid_from }}</li>
+        <li><strong>Valid To:</strong> {{ res.ssl.valid_to }}</li>
+        <li>
+          <strong>Status:</strong>
+          <span class="{% if res.ssl.validity_status != 'Valid' %}text-danger{% else %}text-success{% endif %}">
+            {{ res.ssl.validity_status }}
+          </span>
+        </li>
+      </ul>
+    {% endif %}
+  </section>
+{% endif %}
+
+{% if res.headers %}
+  <section class="mb-4">
+    <h4>Headers</h4>
+    {% if res.headers.error %}
+      <p class="text-danger">{{ res.headers.error }}</p>
+      {% if res.headers.note %}
+        <p class="text-warning">{{ res.headers.note }}</p>
+      {% endif %}
+    {% else %}
+      <pre class="p-3 bg-light rounded">{{ res.headers }}</pre>
+    {% endif %}
+  </section>
+{% endif %}
+
+{% if res.cookies %}
+  <section class="mb-4">
+    <h4>Cookies</h4>
+    {% if res.cookies.error %}
+      <p class="text-danger">{{ res.cookies.error }}</p>
+      {% if res.cookies.note %}
+        <p class="text-warning">{{ res.cookies.note }}</p>
+      {% endif %}
+    {% else %}
+      <pre class="p-3 bg-light rounded">{{ res.cookies }}</pre>
+    {% endif %}
+  </section>
+{% endif %}
+
+{% if res.xss %}
+  <section class="mb-4">
+    <h4>XSS Vulnerabilities</h4>
+    {% if res.xss.error %}
+      <p class="text-danger">{{ res.xss.error }}</p>
+      {% if res.xss.note %}
+        <p class="text-warning">{{ res.xss.note }}</p>
+      {% endif %}
+    {% else %}
+      <pre class="p-3 bg-light rounded">{{ res.xss }}</pre>
+    {% endif %}
+  </section>
+{% endif %}
+
+{% if res.sqli %}
+  <section class="mb-4">
+    <h4>SQL Injection</h4>
+    {% if res.sqli.error %}
+      <p class="text-danger">{{ res.sqli.error }}</p>
+      {% if res.sqli.note %}
+        <p class="text-warning">{{ res.sqli.note }}</p>
+      {% endif %}
+    {% else %}
+      <pre class="p-3 bg-light rounded">{{ res.sqli }}</pre>
+    {% endif %}
+  </section>
+{% endif %}

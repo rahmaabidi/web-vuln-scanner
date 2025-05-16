@@ -1,2 +1,8 @@
+flask
+flask-login
+flask-wtf
+flask-sqlalchemy
+email-validator
 requests
 beautifulsoup4
+xhtml2pdf

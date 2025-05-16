@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Web Vulnerability Scanner</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('index') }}">VulnScanner</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">New Scan</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+        <button id="darkModeToggle" class="btn btn-outline-light ms-auto" aria-label="Toggle Dark Mode">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mt-5">
+    <header class="mb-4 text-center">
+      <h1>Web Vulnerability Scanner</h1>
+      <p class="lead">Enter a URL to scan for vulnerabilities</p>
+    </header>
+
+    <form method="post" class="mb-5">
+      <div class="mb-3">
+        <label for="url" class="form-label">Website URL:</label>
+        <input
+          id="url"
+          name="url"
+          type="url"
+          class="form-control"
+          placeholder="https://example.com"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label for="profile" class="form-label">Scan Profile:</label>
+        <select name="profile" id="profile" class="form-select">
+          <option value="quick">Quick Scan</option>
+          <option value="full">Full Scan</option>
+        </select>
+      </div>
+
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" value="yes" id="crawl" name="crawl">
+        <label class="form-check-label" for="crawl">
+          Crawl the website and scan multiple pages (Full Scan only)
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg w-100">Scan</button>
+    </form>
+
+    {% if results %}
+      <section class="results">
+        <h2 class="mb-4">Scan Results for {{ url }}</h2>
+
+        {# Extract main site results #}
+        {% set main_results = results[url] if results is mapping and url in results else results %}
+        <div class="card mb-4 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title">Main Site</h3>
+            {% set res = main_results %}
+            {% include 'partials/scan_sections.html' %}
+          </div>
+        </div>
+
+        {# Display crawled URLs separately #}
+        {% if results is mapping %}
+          {% set crawled = results | dictsort if results|length > 1 else [] %}
+          {% if crawled %}
+            <h2 class="mb-3">Crawled URLs</h2>
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+              {% for target_url, res in crawled %}
+                {% if target_url != url %}
+                  <div class="col">
+                    <div class="card h-100 shadow-sm">
+                      <div class="card-body">
+                        <h4 class="card-title text-truncate" title="{{ target_url }}">{{ target_url }}</h4>
+                        {% set res = res %}
+                        {% include 'partials/scan_sections.html' %}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endif %}
+
+        {% if scan_id %}
+          <div class="d-grid mt-4">
+            <a href="{{ url_for('download_report', scan_id=scan_id) }}" class="btn btn-success btn-lg">
+              Download PDF Report
+            </a>
+          </div>
+        {% endif %}
+      </section>
+    {% endif %}
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='darkmode.js') }}"></script>
+</body>
+</html>
